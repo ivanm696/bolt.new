@@ -1,0 +1,35 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# 1. АВТО-ОТМЕНА СТАРЫХ СБОРК (если прилетел новый коммит в ту же ветку)
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Устанавливаем pnpm
+      - uses: pnpm/action-setup@v4 # лучше обновить до v4, если доступно
+        with:
+          version: 9.4.0
+
+      # 2. УСТАНОВКА NODE + ВСТРОЕННЫЙ КЭШ ДЛЯ PNPM
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm' # Вот эта строчка экономит кучу времени!
+
+      # Быстрая установка из локального кэша
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Твои дальнейшие шаги сборки и пуша в Cloudflare...
