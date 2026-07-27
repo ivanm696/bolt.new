@@ -2,11 +2,24 @@ import { type ActionFunctionArgs } from '@remix-run/cloudflare';
 import { StreamingTextResponse, parseStreamPart } from 'ai';
 import { streamText } from '~/lib/.server/llm/stream-text';
 import { stripIndents } from '~/utils/stripIndent';
+import { authenticate } from '~/lib/auth';
+import { ratelimit } from '~/lib/ratelimit';
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
 export async function action(args: ActionFunctionArgs) {
+  // Security fix: Implement authentication and rate limiting to prevent unauthorized access and API abuse
+  const user = await authenticate(args.request);
+  if (!user) {
+    throw new Response('Unauthorized', { status: 401 });
+  }
+
+  const { success } = await ratelimit.limit(user.id);
+  if (!success) {
+    throw new Response('Too Many Requests', { status: 429 });
+  }
+
   return enhancerAction(args);
 }
 
