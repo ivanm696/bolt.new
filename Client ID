@@ -1,1 +1,28 @@
-wc_api_melenciucivan33_1961b551146fa19655a374c63e2d5701
+{
+  "name": "Workers AI",
+  "condition": {},
+  "policies": [
+    {
+      "effect": "allow",
+      "permission_groups": [
+        {
+          "id": "959972745952452f8be2452be8cbb9f2"
+        }
+      ],
+      "resources": {
+        "com.cloudflare.api.account.zone.*": "*"
+      }
+    },
+    {
+      "effect": "allow",
+      "permission_groups": [
+        {
+          "id": "bacc64e0f6c34fc0883a1223f938a104"
+        }
+      ],
+      "resources": {
+        "com.cloudflare.api.account.2a7a38ef914a46b9b3549ae606e3253f": "*"
+      }
+    }
+  ]
+}
